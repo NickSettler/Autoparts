@@ -94,6 +94,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/LA_loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

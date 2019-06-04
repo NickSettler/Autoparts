@@ -1,6 +1,7 @@
 package ru.chenk.autoparts;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -39,42 +41,42 @@ public class LoginActivity extends AppCompatActivity {
         emailInputLayout = findViewById(R.id.LA_emailInputLayout);
         passwordInputLayout = findViewById(R.id.LA_passwordInputLayout);
 
-        loginBtn.setOnClickListener(new View.OnClickListener(){
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = emailInputLayout.getEditText().getText().toString();
                 String password = passwordInputLayout.getEditText().getText().toString();
                 boolean errors = false;
 
-                if(email.equals("")){
+                if (email.equals("")) {
                     emailInputLayout.setError("Введите почту");
                     errors = true;
-                }else{
+                } else {
                     emailInputLayout.setError(null);
                 }
 
-                if(password.equals("")){
+                if (password.equals("")) {
                     passwordInputLayout.setError("Введите пароль");
                     errors = true;
-                }else{
+                } else {
                     passwordInputLayout.setError(null);
                 }
 
-                if(!errors){
+                if (!errors) {
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         finish();
-                                    }else{
-                                        try{
+                                    } else {
+                                        try {
                                             throw task.getException();
-                                        }catch(FirebaseAuthInvalidUserException invUserEx){
+                                        } catch (FirebaseAuthInvalidUserException invUserEx) {
                                             emailInputLayout.setError("Проверьте правильность почты");
-                                        }catch(FirebaseAuthInvalidCredentialsException invCredEx){
+                                        } catch (FirebaseAuthInvalidCredentialsException invCredEx) {
                                             passwordInputLayout.setError("Введена неправильная почта или пароль");
-                                        }catch(Exception ex){
+                                        } catch (Exception ex) {
                                             Toast.makeText(getApplicationContext(), "Войти не удалось. Используйте гостевой аккаунт", Toast.LENGTH_LONG).show();
                                         }
                                     }
@@ -91,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     finish();
                                 }
                             }
@@ -109,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void updateIntent(){
+    public void updateIntent() {
         Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(mainActivity);
     }
@@ -121,9 +123,11 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(data == null){ return ; }
+        if (data == null) {
+            return;
+        }
         boolean regged = data.getBooleanExtra("reg", false);
-        if(regged){
+        if (regged) {
             finish();
         }
     }

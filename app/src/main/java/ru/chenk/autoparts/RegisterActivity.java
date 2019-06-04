@@ -13,13 +13,21 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.util.FirestoreChannel;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -29,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout emailLayout, passwordLayout, confirmLayout;
 
     private FirebaseAuth firebaseAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         toolbar = findViewById(R.id.RA_toolbar);
         setSupportActionBar(toolbar);
@@ -85,6 +95,23 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()){
+                                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                        Map<String, Object> user = new HashMap<>();
+                                        user.put("email", email);
+                                        user.put("role", "user");
+                                        db.collection("users").document(uid)
+                                                .set(user)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("SIGNUP", "DB record created successfully");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getApplicationContext(), "Some minor errors occured", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                         Intent intent = new Intent();
                                         intent.putExtra("reg", true);
                                         setResult(RESULT_OK, intent);
@@ -118,7 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

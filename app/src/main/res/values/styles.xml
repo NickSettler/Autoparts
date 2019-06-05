@@ -25,8 +25,17 @@
         <item name="colorControlNormal">@color/colorOnPrimary</item>
     </style>
 
+    <style name="ExpandedToolbarTextView" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/colorOnBackground</item>
+    </style>
+    <style name="CollapsedToolbarTextView" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
+
+    <!--<style name="Widget.MaterialComponents.Button.OutlinedButton.Icon" parent="Widget.MaterialComponents.Button.OutlinedButton"></style>-->
+
     <style name="AppUnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        
+
     </style>
 
     <style name="LoginTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">

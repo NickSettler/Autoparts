@@ -30,9 +30,8 @@
         <!--</com.google.android.material.appbar.CollapsingToolbarLayout>-->
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <include layout="@layout/content_activity_main"
-        android:id="@+id/MA_contentInclude"/>
+    
+    <include layout="@layout/content_activity_main"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -40,6 +39,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@drawable/ic_shopping_cart_black_24dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

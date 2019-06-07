@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(reloadIntent);
         } else if (id == R.id.action_filter) {
             Intent filterActivity = new Intent(MainActivity.this, FilterActivity.class);
-            filterActivity.putExtra("category", modelFilter);
+            filterActivity.putExtra("model", modelFilter);
             startActivityForResult(filterActivity, 1);
         }
 

@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -38,35 +40,49 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="12"
-            app:layout_constraintBottom_toTopOf="@+id/CI_plus"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="x12"
+            app:layout_constraintBottom_toTopOf="@+id/CI_plusButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/CI_minus"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:id="@+id/CI_deleteButton"
+            style="@style/AppIconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textAlignment="textEnd"
+            app:icon="@drawable/ic_delete_black_24dp"
+            app:iconPadding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/CI_count" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/CI_minusButton"
+            style="@style/AppIconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:insetLeft="0dp"
             app:icon="@drawable/ic_remove_circle_outline_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/CI_plus"
+            app:layout_constraintEnd_toStartOf="@+id/CI_plusButton"
             app:layout_constraintTop_toBottomOf="@+id/CI_count" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/CI_plus"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:id="@+id/CI_plusButton"
+            style="@style/AppIconButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             app:icon="@drawable/ic_add_circle_outline_black_24dp"
-            android:insetLeft="0dp"
-            app:iconGravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/CI_image" />
 

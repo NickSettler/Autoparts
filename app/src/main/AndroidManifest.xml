@@ -12,16 +12,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CartActivity"></activity>
+        <activity android:name=".AdminCreatePartActivity"></activity>
+        <activity
+            android:name=".OrderActivity"
+            android:label="Оформление заказа" />
+        <activity
+            android:name=".FilterActivity"
+            android:label="Фильтры" />
+        <activity
+            android:name=".CartActivity"
+            android:label="Корзина" />
         <activity android:name=".PartActivity" />
-        <activity android:name=".AdminActivity" />
+        <activity
+            android:name=".AdminActivity"
+            android:label="Админ панель" />
         <activity
             android:name=".RegisterActivity"
+            android:label="Регистрация"
             android:parentActivityName=".LoginActivity"
             android:theme="@style/LoginTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LoginActivity"
+            android:label="Авторизация"
             android:theme="@style/LoginTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".MainActivity">

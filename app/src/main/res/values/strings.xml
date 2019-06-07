@@ -17,6 +17,12 @@
     <string name="action_signout">Sign Out</string>
     <string name="action_admin">Admin Menu</string>
 
+    <string name="MA_notFoundText">No suitable details exist :(</string>
+
+    <string name="FA_categoryTextView">Model</string>
+
+    <string name="FAM_apply">Применить</string>
+
     <string name="NH_nameTextViewDefault">No name</string>
     <string name="NH_nameTextViewGuest">Guest</string>
 
@@ -24,6 +30,26 @@
     <string name="PA_partPriceTextView">%1$s руб.</string>
     <string name="PA_partOrdersTextView">Заказов: %1$s</string>
     <string name="PA_partCountTextView">На складе: %1$s</string>
+
+    <string name="CA_fabText">Proceed</string>
+
+    <string name="CAM_clear">Clear</string>
+
+    <string name="CI_minusButtonText">Minus</string>
+    <string name="CI_plusButtonText">Plus</string>
+
+    <string name="OA_nameTextViewHint">Name</string>
+    <string name="OA_addressTextViewHint">Address</string>
+    <string name="OA_infoButtonText">Info about delivery</string>
+
+    <string name="AA_partsTextView">Parts</string>
+    <string name="AA_createPartButtonText">Create Part</string>
+    <string name="AA_editPartsButtonText">Edit Parts</string>
+
+    <string name="ACPA_nameHint">Name</string>
+    <string name="ACPA_priceHint">Price</string>
+    <string name="ACPA_countHint">Count</string>
+    <string name="ACPA_chooseImageButtonText">Choose Image</string>
 
     <string name="MA_drawerMenuMain">Автозапчасти</string>
     <string name="MA_drawerMenuOrders">Мои заказы</string>

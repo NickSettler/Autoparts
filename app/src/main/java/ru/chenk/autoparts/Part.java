@@ -62,6 +62,8 @@ public class Part implements Serializable {
         this.price = price;
     }
 
+    public void deleteSpecs(){this.specs.clear();}
+
     public void addSpec(Spec spec){
         this.specs.add(spec);
     }

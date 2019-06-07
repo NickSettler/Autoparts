@@ -23,6 +23,8 @@
         <item name="buttonStyle">@style/AppUnelevatedButton</item>
 
         <item name="colorControlNormal">@color/colorOnPrimary</item>
+        
+        <item name="chipStyle">@style/AppChipStyle</item>
     </style>
 
     <style name="ExpandedToolbarTextView" parent="TextAppearance.AppCompat.Headline">
@@ -32,7 +34,15 @@
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
 
-    <!--<style name="Widget.MaterialComponents.Button.OutlinedButton.Icon" parent="Widget.MaterialComponents.Button.OutlinedButton"></style>-->
+    <style name="AppIconButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="AppChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+
+    </style>
 
     <style name="AppUnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
 
@@ -57,8 +67,6 @@
         <item name="textAppearanceButton">@style/AppTextAppearance.Button</item>
         <item name="textInputStyle">@style/AppTextField</item>
         <item name="toolbarStyle">@style/AppToolbar</item>
-
-
 
         <item name="colorControlNormal">@color/colorOnPrimary</item>
     </style>

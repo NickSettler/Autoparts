@@ -1,20 +1,26 @@
 package ru.chenk.autoparts;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,6 +32,7 @@ import java.util.List;
 public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> {
     private List<Part> dataset;
     private Context context;
+    private CartController cartController;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
@@ -47,6 +54,7 @@ public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> 
     public PartsAdapter(List<Part> myDataset, Context mContext) {
         dataset = myDataset;
         context = mContext;
+        cartController = new CartController(context.getSharedPreferences("SHPREF", Context.MODE_PRIVATE));
     }
 
     @NonNull
@@ -65,32 +73,19 @@ public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     Intent partActivity = new Intent(context, PartActivity.class);
+                    partActivity.putExtra("id", dataset.get(position).getUid());
                     partActivity.putExtra("part", dataset.get(position));
-                    context.startActivity(partActivity);
+                    ((Activity)context).startActivityForResult(partActivity, 1);
                 }
             });
             if (dataset.get(position).imageSrc == null) {
                 holder.image.setImageDrawable(null);
             } else {
-                if (dataset.get(position).image != null) {
-                    Bitmap image = BitmapFactory.decodeByteArray(dataset.get(position).image, 0, dataset.get(position).image.length);
-                    holder.image.setImageBitmap(image);
-                } else {
-                    StorageReference ref = FirebaseStorage.getInstance().getReference().child(dataset.get(position).imageSrc);
-                    ref.getBytes(Long.MAX_VALUE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                        @Override
-                        public void onComplete(@NonNull Task<byte[]> task) {
-                            if (task.isSuccessful()) {
-                                Bitmap image = BitmapFactory.decodeByteArray(task.getResult(), 0, task.getResult().length);
-                                dataset.get(position).image = task.getResult();
-                                holder.image.setImageBitmap(image);
-                            }
-                        }
-                    });
-                }
+                Glide.with(context)
+                        .load(dataset.get(position).imageSrc)
+                        .into(holder.image);
 
             }
-            Log.d("ADAPTER", dataset.get(position).name);
             holder.descTextView.setText(dataset.get(position).getUid());
             holder.nameTextView.setText(dataset.get(position).getName());
             holder.priceTextView.setText(String.format(context.getString(R.string.PA_partPriceTextView), String.valueOf(dataset.get(position).getPrice())));

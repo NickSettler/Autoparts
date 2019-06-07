@@ -1,14 +1,24 @@
 package ru.chenk.autoparts;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,6 +37,10 @@ public class CartActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private CartAdapter adapter;
 
+    private CartController cartController;
+
+    private ExtendedFloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +49,29 @@ public class CartActivity extends AppCompatActivity {
         shPref = getSharedPreferences("SHPREF", MODE_PRIVATE);
         shPrefEditor = shPref.edit();
 
-        getCart();
+        cartController = new CartController(shPref);
 
         toolbar = findViewById(R.id.CA_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        fab = findViewById(R.id.fab);
+
+        if(cartController.getSize() == 0){
+            fab.setEnabled(false);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cartController.getSize() > 0){
+                    Intent orderActivity = new Intent(CartActivity.this, OrderActivity.class);
+                    startActivityForResult(orderActivity, 1);
+                }else{
+                    Snackbar.make(v, "Корзина пуста", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
 
         recyclerView = findViewById(R.id.CA_recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -47,22 +79,41 @@ public class CartActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new CartAdapter(cartList);
+        adapter = new CartAdapter(getApplicationContext(), cartController);
         recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if(dy > 0 && fab.isShown()){
+                    fab.hide();
+                }
+                if(dy < -10 && !fab.isShown()){
+                    fab.show();
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
     }
 
-    public void saveCart(){
-        Gson gson = new Gson();
-        String json = gson.toJson(cartList);
-        shPrefEditor.putString("CART", json);
-        shPrefEditor.commit();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == RESULT_OK){
+            if(data.getStringExtra("res").equals("OK")){
+                Log.d("CA", "Good!");
+                Intent intent = new Intent();
+                intent.putExtra("res", "OK");
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void getCart(){
-        Gson gson = new Gson();
-        String json = shPref.getString("CART", "");
-        cartList = json.equals("") ? new ArrayList<CartItem>() : (ArrayList<CartItem>) gson.fromJson(json, new TypeToken<ArrayList<CartItem>>() {
-        }.getType());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.cart_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -71,6 +122,8 @@ public class CartActivity extends AppCompatActivity {
 
         if(id == android.R.id.home){
             finish();
+        }else if(id == R.id.CAM_clear){
+            cartController.clear();
         }
 
         return super.onOptionsItemSelected(item);

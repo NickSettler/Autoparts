@@ -14,9 +14,11 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,13 +32,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdminCreatePartActivity extends AppCompatActivity {
@@ -50,6 +55,7 @@ public class AdminCreatePartActivity extends AppCompatActivity {
 
     private ImageView preview;
     private ProgressBar progressBar;
+    private Spinner spinner;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -58,6 +64,8 @@ public class AdminCreatePartActivity extends AppCompatActivity {
     private String partId;
     private Uri fileUri;
     private String httpImageUrl;
+
+    private List<String> modelsArray = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,29 @@ public class AdminCreatePartActivity extends AppCompatActivity {
         countInputLayout = findViewById(R.id.ACPA_countInputLayout);
 
         progressBar = findViewById(R.id.ACPA_progressBar);
+
+        spinner = findViewById(R.id.ACPA_modelsSpinner);
+        db.collection("models").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    QuerySnapshot models = task.getResult();
+                    List<DocumentSnapshot> modelSnapshots = models.getDocuments();
+                    for(DocumentSnapshot modelSnapshot : modelSnapshots){
+                        if(modelSnapshot.get("name")!=null){
+                            modelsArray.add(String.valueOf(modelSnapshot.get("name")));
+                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
+                                    getApplicationContext(), android.R.layout.simple_spinner_item, modelsArray
+                            );
+                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinner.setAdapter(spinnerAdapter);
+                        }
+                    }
+                }
+            }
+        });
+
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

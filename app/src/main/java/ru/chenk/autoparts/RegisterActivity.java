@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Button registerButton;
     private TextInputLayout emailLayout, passwordLayout, confirmLayout;
+    private ProgressBar progressBar;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore db;
@@ -57,6 +59,8 @@ public class RegisterActivity extends AppCompatActivity {
         emailLayout = findViewById(R.id.RA_emailInputLayout);
         passwordLayout = findViewById(R.id.RA_passwordInputLayout);
         confirmLayout = findViewById(R.id.RA_confirmPasswordInputLayout);
+
+        progressBar = findViewById(R.id.RA_progressBar);
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +96,11 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 if(!errors){
+                    emailLayout.setEnabled(false);
+                    passwordLayout.setEnabled(false);
+                    confirmLayout.setEnabled(false);
+                    registerButton.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
                     firebaseAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -119,6 +128,11 @@ public class RegisterActivity extends AppCompatActivity {
                                         setResult(RESULT_OK, intent);
                                         finish();
                                     }else{
+                                        emailLayout.setEnabled(true);
+                                        passwordLayout.setEnabled(true);
+                                        confirmLayout.setEnabled(true);
+                                        registerButton.setEnabled(true);
+                                        progressBar.setVisibility(View.INVISIBLE);
                                         try{
                                             throw task.getException();
                                         }catch(FirebaseAuthWeakPasswordException weakPassEx){

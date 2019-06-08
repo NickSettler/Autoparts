@@ -37,12 +37,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -50,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseFirestore db;
     private FirebaseFirestoreSettings settings;
 
+    private boolean isAdmin = false;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -69,8 +68,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        invalidateOptionsMenu();
-
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() == null) {
             Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
@@ -82,6 +79,18 @@ public class MainActivity extends AppCompatActivity
 
         storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot userSnapshot = task.getResult();
+                    if(userSnapshot.get("role") != null){
+                        isAdmin = String.valueOf(userSnapshot.get("role")).equals("admin");
+                    }
+                }
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -167,6 +176,10 @@ public class MainActivity extends AppCompatActivity
         });
 
         notFoundTextView = findViewById(R.id.MA_notFoundTextView);
+
+        if(currentUser.isAnonymous()){
+            fab.setVisibility(View.GONE);
+        }
     }
 
     public void loadData() {
@@ -245,15 +258,20 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(final Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
         if (currentUser != null) {
-            db.collection("users").document(firebaseAuth.getCurrentUser().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot doc) {
-                    if (doc.get("role") != null && doc.get("role").toString().equals("admin")) {
-                        menu.getItem(3).setVisible(true);
-                    }
-                }
-            });
+            if(isAdmin){
+                menu.getItem(3).setVisible(true);
+            }else{
+                menu.getItem(3).setVisible(false);
+            }
+        }
+        if(currentUser.isAnonymous()){
+            menu.getItem(1).setVisible(false);
         }
         return true;
     }
@@ -291,30 +309,5 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
 
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_home) {
-
-        } else if (id == R.id.nav_orders) {
-
-        } else if (id == R.id.nav_cart) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

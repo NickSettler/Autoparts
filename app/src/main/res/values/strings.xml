@@ -59,6 +59,8 @@
     <string name="ACPA_chooseImageButtonText">Choose Image</string>
 
     <string name="UA_addressTextViewText">Address</string>
+    <string name="UA_ordersTextViewText">My orders</string>
+    <string name="UA_ordersButtonText">My orders</string>
 
     <string name="UEA_textViewText">Редактирование пользователя</string>
     <string name="UEA_nameInputLayoutHint">Имя</string>
@@ -66,6 +68,8 @@
     <string name="UEA_buttonText">Сохранить</string>
 
     <string name="UAM_editText">Edit</string>
+
+    <string name="UOI_moreButtonText">More</string>
 
     <string name="MA_drawerMenuMain">Автозапчасти</string>
     <string name="MA_drawerMenuOrders">Мои заказы</string>

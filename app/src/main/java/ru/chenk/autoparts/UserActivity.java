@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,15 +24,26 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 public class UserActivity extends AppCompatActivity {
 
     private TextView nameTextView, addressTextView;
+    private Button ordersButton;
 
     private Toolbar toolbar;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    private ArrayList<UserOrder> ordersList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +61,7 @@ public class UserActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.UA_nameTextView);
         addressTextView = findViewById(R.id.UA_addressTextView);
+        ordersButton = findViewById(R.id.UA_ordersButton);
 
         if(currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null){
             nameTextView.setText("Имя не задано");
@@ -70,6 +86,33 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        db.collection("orders").whereEqualTo("user", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    List<DocumentSnapshot> orderSnapshots = task.getResult().getDocuments();
+                    for(DocumentSnapshot orderSnapshot : orderSnapshots){
+                        UserOrder userOrder = new UserOrder(orderSnapshot.getId());
+                        ArrayList<Map<String, Object>> orderItems = (ArrayList<Map<String, Object>>) orderSnapshot.get("items");
+                        for(ListIterator it = orderItems.listIterator(); it.hasNext(); ){
+                            Map<String, Object> itemMap = (Map<String, Object>) it.next();
+                            UserOrderItem item = new UserOrderItem(String.valueOf(itemMap.get("id")), Integer.valueOf(String.valueOf(itemMap.get("count"))));
+                            userOrder.addItem(item);
+                        }
+                        ordersList.add(userOrder);
+                    }
+                }
+            }
+        });
+
+        ordersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent userOrdersActivity = new Intent(UserActivity.this, UserOrdersActivity.class);
+                startActivity(userOrdersActivity);
             }
         });
     }

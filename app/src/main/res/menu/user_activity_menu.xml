@@ -4,6 +4,6 @@
     <item
         android:id="@+id/UAM_edit"
         android:title="@string/UAM_editText"
-        android:icon="@drawable/ic_edit_black_24dp"
+        android:icon="@drawable/ic_edit_white_24dp"
         app:showAsAction="ifRoom"/>
 </menu>

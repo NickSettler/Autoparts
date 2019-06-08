@@ -28,6 +28,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,6 +45,7 @@ public class PartActivity extends AppCompatActivity {
 
 
     private FirebaseFirestore db;
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     private boolean exists = true;
     private Part part;
@@ -168,6 +171,10 @@ public class PartActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if(currentUser.isAnonymous()){
+            addToCart.setVisibility(View.GONE);
+        }
     }
 
     public void updateUI(){

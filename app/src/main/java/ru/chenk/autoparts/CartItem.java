@@ -6,6 +6,7 @@ public class CartItem implements Serializable {
     private String uid;
     private int count;
     private int maxCount;
+    private int price = -1;
 
     public CartItem(String uid){
         this.uid = uid;
@@ -47,5 +48,16 @@ public class CartItem implements Serializable {
 
     public int getMaxCount() {
         return maxCount;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+    public void setPrice(double price) {
+        this.price = (int)price;
+    }
+
+    public int getPrice() {
+        return price;
     }
 }

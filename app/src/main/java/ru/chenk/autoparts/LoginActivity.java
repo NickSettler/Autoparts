@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginBtn, guestLoginBtn, registerButton;
     private TextInputLayout emailInputLayout, passwordInputLayout;
     private FirebaseAuth mAuth;
+
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
 
         emailInputLayout = findViewById(R.id.LA_emailInputLayout);
         passwordInputLayout = findViewById(R.id.LA_passwordInputLayout);
+
+        progressBar = findViewById(R.id.LA_progressBar);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +68,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (!errors) {
+                    loginBtn.setEnabled(false);
+                    guestLoginBtn.setEnabled(false);
+                    registerButton.setEnabled(false);
+                    emailInputLayout.setEnabled(false);
+                    passwordInputLayout.setEnabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
                     mAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -70,6 +81,12 @@ public class LoginActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         finish();
                                     } else {
+                                        loginBtn.setEnabled(true);
+                                        guestLoginBtn.setEnabled(true);
+                                        registerButton.setEnabled(true);
+                                        emailInputLayout.setEnabled(true);
+                                        passwordInputLayout.setEnabled(true);
+                                        progressBar.setVisibility(View.GONE);
                                         try {
                                             throw task.getException();
                                         } catch (FirebaseAuthInvalidUserException invUserEx) {
@@ -89,6 +106,12 @@ public class LoginActivity extends AppCompatActivity {
         guestLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loginBtn.setEnabled(false);
+                guestLoginBtn.setEnabled(false);
+                registerButton.setEnabled(false);
+                emailInputLayout.setEnabled(false);
+                passwordInputLayout.setEnabled(false);
+                progressBar.setVisibility(View.VISIBLE);
                 mAuth.signInAnonymously()
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override

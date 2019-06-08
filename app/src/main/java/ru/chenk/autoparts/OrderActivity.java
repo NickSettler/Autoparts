@@ -96,7 +96,7 @@ public class OrderActivity extends AppCompatActivity {
 
                 if (!fillErrors) {
                     String name = nameTextLayout.getEditText().getText().toString();
-                    String address = addressTextLayout.getEditText().getText().toString();
+                    final String address = addressTextLayout.getEditText().getText().toString();
                     if (needToFillName) {
                         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(name)
@@ -110,10 +110,21 @@ public class OrderActivity extends AppCompatActivity {
                             }
                         });
                     }
+                    if(needToFillAddress){
+                        final DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+                        db.runTransaction(new Transaction.Function<Object>() {
+                            @Nullable
+                            @Override
+                            public Object apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                DocumentSnapshot userSnapshot = transaction.get(userRef);
+                                transaction.update(userRef, "address", address);
+                                return address;
+                            }
+                        });
+                    }
                     final ArrayList<CartItem> cartList = cartController.getCart();
                     for (final CartItem cartItem : cartList) {
                         final DocumentReference partRef = db.collection("parts").document(cartItem.getUid());
-                        WriteBatch batch = db.batch();
                         db.runTransaction(new Transaction.Function<Object>() {
                             @Nullable
                             @Override
@@ -221,6 +232,21 @@ public class OrderActivity extends AppCompatActivity {
         } else {
             needToFillName = true;
         }
+
+        db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot userSnapshot = task.getResult();
+                    if(userSnapshot.get("address")!=null){
+                        userAddress = String.valueOf(userSnapshot.get("address"));
+                        addressTextLayout.getEditText().setText(userAddress);
+                    }else{
+                        needToFillAddress = true;
+                    }
+                }
+            }
+        });
     }
 
     @Override

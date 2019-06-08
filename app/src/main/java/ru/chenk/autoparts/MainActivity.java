@@ -31,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -203,7 +204,7 @@ public class MainActivity extends AppCompatActivity
                         if (doc.get("price") != null) {
                             p.setPrice(Double.valueOf(doc.get("price").toString()));
                         }
-                        if(doc.get("spec")!=null){
+                        if(doc.get("specs")!=null){
                             Map<String, Map<String, String>> specs = (Map<String, Map<String, String>>) doc.get("specs");
                             Set<String> specKeys = specs.keySet();
                             for (String key : specKeys) {
@@ -278,6 +279,9 @@ public class MainActivity extends AppCompatActivity
             Intent filterActivity = new Intent(MainActivity.this, FilterActivity.class);
             filterActivity.putExtra("model", modelFilter);
             startActivityForResult(filterActivity, 1);
+        }else if(id == R.id.action_profile){
+            Intent userActivity = new Intent(MainActivity.this, UserActivity.class);
+            startActivity(userActivity);
         }
 
 
@@ -286,10 +290,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        }
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

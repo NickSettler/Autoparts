@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,12 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -45,6 +49,7 @@ public class AdminCreatePartActivity extends AppCompatActivity {
     private FloatingActionButton fab;
 
     private ImageView preview;
+    private ProgressBar progressBar;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -71,28 +76,35 @@ public class AdminCreatePartActivity extends AppCompatActivity {
         priceInputLayout = findViewById(R.id.ACPA_priceInputLayout);
         countInputLayout = findViewById(R.id.ACPA_countInputLayout);
 
+        progressBar = findViewById(R.id.ACPA_progressBar);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 String name = nameInputLayout.getEditText().getText().toString();
                 String price = priceInputLayout.getEditText().getText().toString();
                 String count = countInputLayout.getEditText().getText().toString();
 
                 boolean errors = false;
 
-                if(name.equals("")){
+                if (name.equals("")) {
                     nameInputLayout.setError("Введите название");
                     errors = true;
                 }
-                if(price.equals("")){
+                if (price.equals("")) {
                     priceInputLayout.setError("Введите название");
                     errors = true;
                 }
-                if(count.equals("")){
+                if (count.equals("")) {
                     countInputLayout.setError("Введите название");
                     errors = true;
                 }
-                if(!errors){
+                if (!errors) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    nameInputLayout.setEnabled(false);
+                    priceInputLayout.setEnabled(false);
+                    countInputLayout.setEnabled(false);
+                    chooseImageButton.setEnabled(false);
                     final Map<String, Object> partMap = new HashMap<>();
                     partMap.put("name", name);
                     partMap.put("shown", true);
@@ -102,16 +114,16 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                     db.collection("parts").add(partMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 DocumentReference partSnapshot = task.getResult();
                                 partId = partSnapshot.getId();
                                 Log.d("PARTID", partId);
-                                String imageName = "parts/"+partSnapshot.getId()+"/"+System.currentTimeMillis();
+                                String imageName = "parts/" + partSnapshot.getId() + "/" + System.currentTimeMillis();
                                 final StorageReference imageRef = storageRef.child(imageName);
                                 imageRef.putFile(fileUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> fileTask) {
-                                        if(fileTask.isSuccessful()){
+                                        if (fileTask.isSuccessful()) {
                                             imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
                                                 public void onSuccess(Uri uri) {
@@ -126,11 +138,27 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                                                             return null;
                                                         }
                                                     });
+                                                    setResult(RESULT_OK);
+                                                    finish();
                                                 }
                                             });
+                                        }else{
+                                            progressBar.setVisibility(View.GONE);
+                                            nameInputLayout.setEnabled(true);
+                                            priceInputLayout.setEnabled(true);
+                                            countInputLayout.setEnabled(true);
+                                            chooseImageButton.setEnabled(true);
+                                            Snackbar.make(v, "Не удалось загрузить изображение на сервер", Snackbar.LENGTH_LONG).show();
                                         }
                                     }
                                 });
+                            }else{
+                                progressBar.setVisibility(View.GONE);
+                                nameInputLayout.setEnabled(true);
+                                priceInputLayout.setEnabled(true);
+                                countInputLayout.setEnabled(true);
+                                chooseImageButton.setEnabled(true);
+                                Snackbar.make(v, "Не удалось создать автозапчасть", Snackbar.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -149,7 +177,7 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                 try {
                     startActivityForResult(Intent.createChooser(fileIntent, "Select an Image to Upload"), 0);
 
-                }catch (ActivityNotFoundException e){
+                } catch (ActivityNotFoundException e) {
                     Toast.makeText(getApplicationContext(), "No File Manager found", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -157,9 +185,30 @@ public class AdminCreatePartActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Удалить черновик")
+                .setMessage("Запчасть еще не сохранена в базе. Данные не будут сохранены.")
+                .setPositiveButton("Отменить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("Удалить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == 0){
-            if(resultCode == RESULT_OK){
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
                 Uri uri = data.getData();
                 preview.setImageURI(uri);
                 fileUri = uri;
@@ -172,8 +221,24 @@ public class AdminCreatePartActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home){
-            finish();
+        if (id == android.R.id.home) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Удалить черновик")
+                    .setMessage("Запчасть еще не сохранена в базе. Данные не будут сохранены.")
+                    .setPositiveButton("Отменить", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setNegativeButton("Удалить", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }
+                    })
+                    .show();
         }
 
         return super.onOptionsItemSelected(item);

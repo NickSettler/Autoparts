@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
@@ -30,10 +31,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private Context context;
     private CartController cartController;
 
-    public static class CartViewHolder extends RecyclerView.ViewHolder{
+    public static class CartViewHolder extends RecyclerView.ViewHolder {
         public ImageView itemImageView;
         public TextView itemName;
         public TextView itemCount;
+        public TextView itemPrice;
+        public TextView itemTotalPrice;
         public Button minusButton, plusButton, deleteButton;
 
         public CartViewHolder(@NonNull View itemView) {
@@ -41,13 +44,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             itemImageView = itemView.findViewById(R.id.CI_image);
             itemName = itemView.findViewById(R.id.CI_name);
             itemCount = itemView.findViewById(R.id.CI_count);
+            itemPrice = itemView.findViewById(R.id.CI_price);
+            itemTotalPrice = itemView.findViewById(R.id.CI_total);
             minusButton = itemView.findViewById(R.id.CI_minusButton);
             plusButton = itemView.findViewById(R.id.CI_plusButton);
             deleteButton = itemView.findViewById(R.id.CI_deleteButton);
         }
     }
 
-    public CartAdapter(Context context, CartController cartController){
+    public CartAdapter(Context context, CartController cartController) {
         this.context = context;
         this.cartController = cartController;
         this.dataset = cartController.getCart();
@@ -63,16 +68,26 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final CartViewHolder holder, final int position) {
-        if(dataset.get(position)!=null){
-            holder.itemCount.setText("x"+ dataset.get(position).getCount());
+        if (dataset.get(position) != null) {
+            final int price = dataset.get(position).getPrice();
+            final int count = dataset.get(position).getCount();
+            holder.itemCount.setText("x" + count);
+            if (dataset.get(position).getPrice() != -1) {
+                holder.itemPrice.setText(price + " руб.");
+                holder.itemTotalPrice.setText(price + " x" + count + " = " + (price * count));
+            }
             holder.plusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(dataset.get(position).getCount() < dataset.get(position).getMaxCount()){
+                    if (dataset.get(position).getCount() < dataset.get(position).getMaxCount()) {
                         dataset.get(position).inc();
                         cartController.increaseItem(dataset.get(position).getUid());
+                        if (dataset.get(position).getPrice() != -1) {
+                            holder.itemPrice.setText(price + " руб.");
+                            holder.itemTotalPrice.setText(price + " x" + count + " = " + (price * count));
+                        }
                         notifyDataSetChanged();
-                    }else{
+                    } else {
                         Snackbar.make(v, "Максимум для одного заказа", Snackbar.LENGTH_SHORT).show();
                     }
                 }
@@ -80,9 +95,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.minusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(dataset.get(position).getCount() > 0){
+                    if (dataset.get(position).getCount() > 0) {
                         cartController.decreaseItem(dataset.get(position).getUid());
                         dataset.get(position).dec();
+                        if (dataset.get(position).getPrice() != -1) {
+                            holder.itemPrice.setText(price + " руб.");
+                            holder.itemTotalPrice.setText(price + " x" + count + " = " + (price * count));
+                        }
                         notifyDataSetChanged();
                     }
                 }
@@ -90,9 +109,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    cartController.removeItem(dataset.get(position).getUid());
-                    dataset.remove(position);
-                    notifyDataSetChanged();
+                    if (dataset.get(position) != null) {
+                        cartController.removeItem(dataset.get(position).getUid());
+                        dataset.remove(position);
+                        notifyDataSetChanged();
+                    }
                 }
             });
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -100,12 +121,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 DocumentSnapshot data = task.getResult();
-                                if(data.get("name")!=null){
-                                    holder.itemName.setText(data.get("name").toString());
+                                if (data.get("name") != null) {
+                                    holder.itemName.setText(String.valueOf(data.get("name")));
                                 }
-                                if(data.get("image")!=null){
+                                if (dataset.get(position).getPrice() == -1) {
+                                    if (data.get("price") != null) {
+                                        cartController.setItemPrice(dataset.get(position).getUid(), Integer.valueOf(String.valueOf(data.get("price"))));
+                                        holder.itemPrice.setText(data.get("price") + " руб.");
+                                        holder.itemTotalPrice.setText(data.get("price") + " x" + dataset.get(position).getCount() + " = " + (Integer.valueOf(String.valueOf(data.get("price"))) * dataset.get(position).getCount()));
+                                    }
+                                }
+                                if (data.get("image") != null) {
                                     Glide.with(context)
                                             .load(String.valueOf(data.get("image")))
                                             .into(holder.itemImageView);
@@ -115,6 +143,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     });
 
         }
+    }
+
+    public void clear() {
+        cartController.clear();
+        dataset = cartController.getCart();
+        notifyDataSetChanged();
     }
 
     @Override

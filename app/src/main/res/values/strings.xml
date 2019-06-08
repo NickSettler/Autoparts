@@ -17,6 +17,11 @@
     <string name="action_signout">Sign Out</string>
     <string name="action_admin">Admin Menu</string>
 
+    <string name="RA_emailInputLayoutHint">Почта</string>
+    <string name="RA_passwordInputLayoutHint">Пароль</string>
+    <string name="RA_confirmInputLayoutHint">Подтверждение</string>
+    <string name="RA_registerButtonText">Создать аккаунт</string>
+
     <string name="MA_notFoundText">No suitable details exist :(</string>
 
     <string name="FA_categoryTextView">Model</string>
@@ -45,11 +50,22 @@
     <string name="AA_partsTextView">Parts</string>
     <string name="AA_createPartButtonText">Create Part</string>
     <string name="AA_editPartsButtonText">Edit Parts</string>
+    <string name="AA_ordersTextView">Orders</string>
+    <string name="AA_showOrdersButtonText">Show orders</string>
 
     <string name="ACPA_nameHint">Name</string>
     <string name="ACPA_priceHint">Price</string>
     <string name="ACPA_countHint">Count</string>
     <string name="ACPA_chooseImageButtonText">Choose Image</string>
+
+    <string name="UA_addressTextViewText">Address</string>
+
+    <string name="UEA_textViewText">Редактирование пользователя</string>
+    <string name="UEA_nameInputLayoutHint">Имя</string>
+    <string name="UEA_addressInputLayoutHint">Адрес</string>
+    <string name="UEA_buttonText">Сохранить</string>
+
+    <string name="UAM_editText">Edit</string>
 
     <string name="MA_drawerMenuMain">Автозапчасти</string>
     <string name="MA_drawerMenuOrders">Мои заказы</string>

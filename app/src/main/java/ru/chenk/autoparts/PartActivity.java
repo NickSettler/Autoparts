@@ -153,7 +153,7 @@ public class PartActivity extends AppCompatActivity {
                     if (cartController.exists(part.getUid())) {
                         cartController.increaseItem(part.getUid());
                     } else {
-                        cartController.addItem(part.getUid(), 1, part.getCount());
+                        cartController.addItem(part.getUid(), 1, part.getCount(), part.getPrice());
                     }
                     Snackbar.make(v, "Добавлено", Snackbar.LENGTH_LONG)
                             .setAction("В корзину", new View.OnClickListener() {

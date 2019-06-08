@@ -2,6 +2,7 @@ package ru.chenk.autoparts;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +34,7 @@ public class CartController {
     public void saveCart(){
         Gson gson = new Gson();
         String json = gson.toJson(cartList);
+        Log.d("JSON_CART", json);
         prefEditor.putString("CART", json);
         prefEditor.commit();
         cartList = getCart();
@@ -68,6 +70,7 @@ public class CartController {
 
 
     public boolean exists(String uid){
+        cartList = getCart();
         boolean found = false;
         for (CartItem ci : cartList){
             found = ci.getUid().equals(uid) || found;
@@ -76,6 +79,7 @@ public class CartController {
     }
 
     public void increaseItem(String uid){
+        cartList = getCart();
         CartItem cartItem = this.getItemByUid(uid);
         if(cartItem.getCount() < cartItem.getMaxCount()){
             cartItem.inc();
@@ -84,40 +88,72 @@ public class CartController {
     }
 
     public void decreaseItem(String uid){
+        cartList = getCart();
         CartItem cartItem = this.getItemByUid(uid);
         cartItem.dec();
         saveCart();
     }
 
+    public void setItemPrice(String uid, int price){
+        cartList = getCart();
+        CartItem cartItem = this.getItemByUid(uid);
+        cartItem.setPrice(price);
+        saveCart();
+    }
+
     public void removeItem(String uid){
+        cartList = getCart();
         int index = this.getItemIndexByUid(uid);
         cartList.remove(index);
         saveCart();
     }
 
     public void clear(){
-        cartList = new ArrayList<CartItem>();
+        cartList = getCart();
+        cartList = new ArrayList<>();
         saveCart();
     }
 
     public int getSize(){
+        cartList = getCart();
         return cartList.size();
     }
 
     public void addItem(String uid){
+        cartList = getCart();
         CartItem cartItem = new CartItem(uid, 1);
         cartList.add(cartItem);
         saveCart();
     }
 
     public void addItem(String uid, int count){
+        cartList = getCart();
         CartItem cartItem = new CartItem(uid, count);
         cartList.add(cartItem);
         saveCart();
     }
     public void addItem(String uid, int count, int maxCount){
+        cartList = getCart();
         CartItem cartItem = new CartItem(uid, count, maxCount);
         cartList.add(cartItem);
         saveCart();
+    }
+    public void addItem(String uid, int count, int maxCount, double price){
+        cartList = getCart();
+        CartItem cartItem = new CartItem(uid, count, maxCount);
+        cartItem.setPrice(price);
+        cartList.add(cartItem);
+        saveCart();
+    }
+
+    public int getTotalPrice(){
+        int total = 0;
+        cartList = getCart();
+        for(CartItem cartItem : cartList){
+            total += cartItem.getCount() * cartItem.getPrice();
+        }
+        Log.d("CartC", String.valueOf(total));
+        saveCart();
+        return total;
     }
 }

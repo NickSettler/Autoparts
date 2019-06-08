@@ -3,7 +3,6 @@
     package="ru.chenk.autoparts">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AdminCreatePartActivity"></activity>
+        <activity android:name=".UserEditActivity"></activity>
+        <activity android:name=".UserActivity" />
+        <activity android:name=".AdminCreatePartActivity" />
         <activity
             android:name=".OrderActivity"
             android:label="Оформление заказа" />

@@ -50,6 +50,8 @@ public class RegisterActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.RA_toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         registerButton = findViewById(R.id.RA_registerButton);
 
         emailLayout = findViewById(R.id.RA_emailInputLayout);

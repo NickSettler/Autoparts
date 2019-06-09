@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AdminEditPartsActivity" android:label="Редактирование запчастей"></activity>
+        <activity android:name=".AdminOrderActivity"></activity>
+        <activity android:name=".AdminAllOrdersActivity" />
+        <activity
+            android:name=".AdminEditPartsActivity"
+            android:label="Редактирование запчастей" />
         <activity android:name=".UserOrdersActivity" />
         <activity android:name=".UserEditActivity" />
         <activity android:name=".UserActivity" />

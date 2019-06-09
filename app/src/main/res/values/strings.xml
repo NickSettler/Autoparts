@@ -5,89 +5,77 @@
     <string name="LA_loginButton">Войти</string>
     <string name="LA_guestLoginButton">Гость</string>
     <string name="LA_registerButton">Регистрация</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_filter">Filter</string>
-    <string name="action_profile">Profile</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_signout">Sign Out</string>
-    <string name="action_admin">Admin Menu</string>
+    <string name="action_filter">Фильтры</string>
+    <string name="action_profile">Профиль</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_signout">Выйти</string>
+    <string name="action_admin">Админ панель</string>
 
     <string name="RA_emailInputLayoutHint">Почта</string>
     <string name="RA_passwordInputLayoutHint">Пароль</string>
     <string name="RA_confirmInputLayoutHint">Подтверждение</string>
     <string name="RA_registerButtonText">Создать аккаунт</string>
 
-    <string name="MA_notFoundText">No suitable details exist :(</string>
+    <string name="MA_notFoundText">Нет подходящих деталей</string>
 
-    <string name="FA_categoryTextView">Model</string>
+    <string name="FA_categoryTextView">Модели</string>
 
     <string name="FAM_apply">Применить</string>
 
-    <string name="NH_nameTextViewDefault">No name</string>
-    <string name="NH_nameTextViewGuest">Guest</string>
+    <string name="NH_nameTextViewDefault">Нет имени</string>
+    <string name="NH_nameTextViewGuest">Гость</string>
 
-    <string name="PA_specsTextViewText">Specs</string>
+    <string name="PA_specsTextViewText">Характеристики</string>
     <string name="PA_partPriceTextView">%1$s руб.</string>
     <string name="PA_partOrdersTextView">Заказов: %1$s</string>
     <string name="PA_partCountTextView">На складе: %1$s</string>
 
-    <string name="CA_fabText">Proceed</string>
+    <string name="CA_fabText">Далее</string>
 
-    <string name="CAM_clear">Clear</string>
+    <string name="CAM_clear">Отчиститть</string>
 
-    <string name="CI_minusButtonText">Minus</string>
-    <string name="CI_plusButtonText">Plus</string>
+    <string name="CI_minusButtonText">Минус</string>
+    <string name="CI_plusButtonText">Плюс</string>
 
-    <string name="OA_nameTextViewHint">Name</string>
-    <string name="OA_addressTextViewHint">Address</string>
-    <string name="OA_infoButtonText">Info about delivery</string>
+    <string name="OA_nameTextViewHint">Имя</string>
+    <string name="OA_addressTextViewHint">Адрес</string>
+    <string name="OA_infoButtonText">Информация о доставке</string>
 
-    <string name="AA_partsTextView">Parts</string>
-    <string name="AA_createPartButtonText">Create Part</string>
-    <string name="AA_editPartsButtonText">Edit Parts</string>
-    <string name="AA_ordersTextView">Orders</string>
-    <string name="AA_showOrdersButtonText">Show orders</string>
+    <string name="AA_partsTextView">Автозапчасти</string>
+    <string name="AA_createPartButtonText">Добавить</string>
+    <string name="AA_editPartsButtonText">Изменить</string>
+    <string name="AA_ordersTextView">Заказы</string>
+    <string name="AA_showOrdersButtonText">Показать заказы</string>
 
-    <string name="ACPA_nameHint">Name</string>
-    <string name="ACPA_priceHint">Price</string>
-    <string name="ACPA_countHint">Count</string>
-    <string name="ACPA_modelHint">Model</string>
-    <string name="ACPA_specsTextViewText">Specs</string>
-    <string name="ACPA_chooseImageButtonText">Choose Image</string>
-    <string name="ACPA_addSpecButtonText">Add Spec</string>
+    <string name="ACPA_nameHint">Название</string>
+    <string name="ACPA_priceHint">Цена</string>
+    <string name="ACPA_countHint">Количество</string>
+    <string name="ACPA_modelHint">Модель</string>
+    <string name="ACPA_specsTextViewText">Характеристики</string>
+    <string name="ACPA_chooseImageButtonText">Выбрать изображение</string>
+    <string name="ACPA_addSpecButtonText">Добавить</string>
 
-    <string name="ACPASD_nameHint">Name</string>
-    <string name="ACPASD_valueHint">Value</string>
+    <string name="ACPASD_nameHint">Название</string>
+    <string name="ACPASD_valueHint">Значение</string>
 
-    <string name="PEIV_editButtonText">Edit</string>
-    <string name="PEIV_deleteButtonText">Delete</string>
+    <string name="PEIV_editButtonText">Изменить</string>
+    <string name="PEIV_deleteButtonText">Удалить</string>
 
-    <string name="UA_addressTextViewText">Address</string>
-    <string name="UA_ordersTextViewText">My orders</string>
-    <string name="UA_ordersButtonText">My orders</string>
+    <string name="UA_addressTextViewText">Адрес</string>
+    <string name="UA_ordersTextViewText">Мои заказы</string>
+    <string name="UA_ordersButtonText">Мои заказы</string>
 
     <string name="UEA_textViewText">Редактирование пользователя</string>
     <string name="UEA_nameInputLayoutHint">Имя</string>
     <string name="UEA_addressInputLayoutHint">Адрес</string>
     <string name="UEA_buttonText">Сохранить</string>
 
-    <string name="UAM_editText">Edit</string>
+    <string name="UAM_editText">Изменить</string>
 
-    <string name="UOI_moreButtonText">More</string>
+    <string name="UOI_moreButtonText">Подробнее</string>
 
     <string name="MA_drawerMenuMain">Автозапчасти</string>
     <string name="MA_drawerMenuOrders">Мои заказы</string>
     <string name="MA_drawerMenuCart">Корзина</string>
     <string name="MA_drawerMenuAbout">О нас</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
-    <string name="title_activity_nav_ex">NavEx</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

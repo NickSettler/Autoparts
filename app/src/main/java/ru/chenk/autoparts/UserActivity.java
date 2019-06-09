@@ -53,7 +53,7 @@ public class UserActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.UA_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null) {
+        if (currentUser.getDisplayName() == null) {
             getSupportActionBar().setTitle("Пользователь");
         } else {
             getSupportActionBar().setTitle(currentUser.getDisplayName());
@@ -63,12 +63,6 @@ public class UserActivity extends AppCompatActivity {
         addressTextView = findViewById(R.id.UA_addressTextView);
         ordersButton = findViewById(R.id.UA_ordersButton);
 
-        if (currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null) {
-            nameTextView.setText("Имя не задано");
-            nameTextView.setTextColor(Color.parseColor("#b6b6b6"));
-        } else {
-            nameTextView.setText(currentUser.getDisplayName());
-        }
         db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -77,6 +71,14 @@ public class UserActivity extends AppCompatActivity {
                     if (userSnapshot.get("address") != null) {
                         String userAddress = String.valueOf(userSnapshot.get("address"));
                         addressTextView.setText(userAddress);
+                    }else{
+                        addressTextView.setText("Адрес не задан");
+                    }
+                    if(userSnapshot.get("username") != null){
+                        nameTextView.setText(String.valueOf(userSnapshot.get("username")));
+                    }else{
+                        nameTextView.setTextColor(Color.parseColor("#b6b6b6"));
+                        nameTextView.setText("Имя не задано");
                     }
                 }
             }
@@ -123,6 +125,7 @@ public class UserActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
                 if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().equals("")) {
+                    getSupportActionBar().setTitle(currentUser.getDisplayName());
                     nameTextView.setText(currentUser.getDisplayName());
                 }
             }

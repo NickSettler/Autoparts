@@ -79,7 +79,7 @@ public class UserEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean fillErrors = false;
-                String name = nameInputLayout.getEditText().getText().toString();
+                final String name = nameInputLayout.getEditText().getText().toString();
                 final String address = addressInputLayout.getEditText().getText().toString();
                 if(name.equals("")){
                     fillErrors = true;
@@ -114,6 +114,7 @@ public class UserEditActivity extends AppCompatActivity {
                                     public Object apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                         DocumentSnapshot userSnapshot = transaction.get(userRef);
                                         transaction.update(userRef, "address", address);
+                                        transaction.update(userRef, "username", name);
                                         return address;
                                     }
                                 }).addOnCompleteListener(new OnCompleteListener<Object>() {

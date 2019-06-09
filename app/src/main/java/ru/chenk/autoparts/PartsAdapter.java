@@ -44,7 +44,7 @@ public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.PI_textView);
-            descTextView = itemView.findViewById(R.id.PI_desc);
+//            descTextView = itemView.findViewById(R.id.PI_desc);
             image = itemView.findViewById(R.id.PI_image);
             priceTextView = itemView.findViewById(R.id.PI_price);
             moreButton = itemView.findViewById(R.id.PI_moreButton);
@@ -86,7 +86,7 @@ public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> 
                         .into(holder.image);
 
             }
-            holder.descTextView.setText(dataset.get(position).getModel());
+//            holder.descTextView.setText(dataset.get(position).getModel());
             holder.nameTextView.setText(dataset.get(position).getName());
             holder.priceTextView.setText(String.format(context.getString(R.string.PA_partPriceTextView), String.valueOf(dataset.get(position).getPrice())));
 

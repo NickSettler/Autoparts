@@ -3,6 +3,7 @@ package ru.chenk.autoparts;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,8 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.View.GONE;
+
 public class UserOrderItemsAdapter extends RecyclerView.Adapter<UserOrderItemsAdapter.UserOrderItemViewHolder> {
     private List<UserOrderItem> dataset;
+    private List<View> invisibleItems;
+    private ProgressBar progressBar;
 
     public static class UserOrderItemViewHolder extends RecyclerView.ViewHolder{
         public TextView itemName;
@@ -33,6 +38,12 @@ public class UserOrderItemsAdapter extends RecyclerView.Adapter<UserOrderItemsAd
 
     public UserOrderItemsAdapter(ArrayList<UserOrderItem> dataset){
         this.dataset = dataset;
+    }
+
+    public UserOrderItemsAdapter(ArrayList<UserOrderItem> dataset, List<View> invisibleItems, ProgressBar progressBar){
+        this.dataset = dataset;
+        this.invisibleItems = invisibleItems;
+        this.progressBar = progressBar;
     }
 
     @NonNull

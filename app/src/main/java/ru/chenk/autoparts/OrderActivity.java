@@ -7,6 +7,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
@@ -59,6 +62,8 @@ public class OrderActivity extends AppCompatActivity {
 
     private boolean errors = false;
 
+    private Context context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +100,7 @@ public class OrderActivity extends AppCompatActivity {
                 }
 
                 if (!fillErrors) {
-                    String name = nameTextLayout.getEditText().getText().toString();
+                    final String name = nameTextLayout.getEditText().getText().toString();
                     final String address = addressTextLayout.getEditText().getText().toString();
                     if (needToFillName) {
                         UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
@@ -118,6 +123,7 @@ public class OrderActivity extends AppCompatActivity {
                             public Object apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                                 DocumentSnapshot userSnapshot = transaction.get(userRef);
                                 transaction.update(userRef, "address", address);
+                                transaction.update(userRef, "username", name);
                                 return address;
                             }
                         });
@@ -179,29 +185,38 @@ public class OrderActivity extends AppCompatActivity {
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot userSnapshot = task.getResult();
-                            ArrayList<Map<String, ArrayList<Map<String, Object>>>> allUserOrders = (ArrayList<Map<String, ArrayList<Map<String, Object>>>>) userSnapshot.getData().get("orders");
-                            Log.d("OR", "BEFORE: " + allUserOrders.toString());
-                            ArrayList<Map<String, Object>> userOrders = allUserOrders.get(0).get("items");
-                            Map<String, Object> newItem = new HashMap<>();
-                            newItem.put("uid", "LELELELE");
-                            newItem.put("count", 123);
-                            userOrders.add(newItem);
-                            Map<String, ArrayList<Map<String, Object>>> newItemsList = new HashMap<>();
-                            newItemsList.put("items", userOrders);
-                            ArrayList<Map<String, ArrayList<Map<String, Object>>>> newOrdersList = new ArrayList<>();
-                            newOrdersList.add(newItemsList);
-                            for (Object currentUserOrder : allUserOrders.get(0).get("items")) {
-                                Map<String, Double> userOrder = (Map<String, Double>) currentUserOrder;
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle("Доставка")
+                        .setMessage("Доставка осуществляется Почтой России. Оплата товара происходит на почте при получении.")
+                        .setPositiveButton("Понятно", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
                             }
-                            Log.d("OR", "AFTER: " + newOrdersList.toString());
-                        }
-                    }
-                });
+                        }).show();
+//                db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            DocumentSnapshot userSnapshot = task.getResult();
+//                            ArrayList<Map<String, ArrayList<Map<String, Object>>>> allUserOrders = (ArrayList<Map<String, ArrayList<Map<String, Object>>>>) userSnapshot.getData().get("orders");
+//                            Log.d("OR", "BEFORE: " + allUserOrders.toString());
+//                            ArrayList<Map<String, Object>> userOrders = allUserOrders.get(0).get("items");
+//                            Map<String, Object> newItem = new HashMap<>();
+//                            newItem.put("uid", "LELELELE");
+//                            newItem.put("count", 123);
+//                            userOrders.add(newItem);
+//                            Map<String, ArrayList<Map<String, Object>>> newItemsList = new HashMap<>();
+//                            newItemsList.put("items", userOrders);
+//                            ArrayList<Map<String, ArrayList<Map<String, Object>>>> newOrdersList = new ArrayList<>();
+//                            newOrdersList.add(newItemsList);
+//                            for (Object currentUserOrder : allUserOrders.get(0).get("items")) {
+//                                Map<String, Double> userOrder = (Map<String, Double>) currentUserOrder;
+//                            }
+//                            Log.d("OR", "AFTER: " + newOrdersList.toString());
+//                        }
+//                    }
+//                });
             }
         });
 

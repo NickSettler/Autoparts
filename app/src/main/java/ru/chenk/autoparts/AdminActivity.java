@@ -14,7 +14,7 @@ public class AdminActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-    private Button createPartButton, editPartButton;
+    private Button createPartButton, editPartButton, showOrdersButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,8 @@ public class AdminActivity extends AppCompatActivity {
         createPartButton = findViewById(R.id.AA_createPartButton);
         editPartButton = findViewById(R.id.AA_editPartButton);
 
+        showOrdersButton = findViewById(R.id.AA_showOrdersButton);
+
         createPartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +44,14 @@ public class AdminActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent editPartsActivity = new Intent(AdminActivity.this, AdminEditPartsActivity.class);
                 startActivity(editPartsActivity);
+            }
+        });
+
+        showOrdersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent adminAllOrdersActivity = new Intent(AdminActivity.this, AdminAllOrdersActivity.class);
+                startActivity(adminAllOrdersActivity);
             }
         });
     }

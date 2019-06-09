@@ -44,7 +44,6 @@ public class PartsEditAdapter extends RecyclerView.Adapter<PartsEditAdapter.Part
             partOrders = itemView.findViewById(R.id.PEIV_orders);
             partCount = itemView.findViewById(R.id.PEIV_count);
             partImage = itemView.findViewById(R.id.PEIV_imageView);
-            editButton = itemView.findViewById(R.id.PEIV_editButton);
             deleteButton = itemView.findViewById(R.id.PEIV_deleteButton);
         }
     }
@@ -93,13 +92,6 @@ public class PartsEditAdapter extends RecyclerView.Adapter<PartsEditAdapter.Part
                     });
                 }
             });
-
-//            holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                }
-//            });
         }
     }
 

@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private TextView notFoundTextView;
+    private FloatingActionButton fab;
 
     private RecyclerView recyclerView;
     private PartsAdapter adapter;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,11 +134,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 && fab.isShown()) {
-                    fab.hide();
-                }
-                if (dy < -10 && !fab.isShown()) {
-                    fab.show();
+                if(currentUser!=null && !currentUser.isAnonymous()){
+                    if (dy > 0 && fab.isShown()) {
+                        fab.hide();
+                    }
+                    if (dy < -10 && !fab.isShown()) {
+                        fab.show();
+                    }
                 }
             }
 
@@ -162,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
         invalidateOptionsMenu();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser!=null){
+            if(currentUser.isAnonymous()){
+                fab.setVisibility(View.GONE);
+            }
             db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -259,9 +265,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         if (currentUser != null) {
             if(isAdmin){
-                menu.getItem(3).setVisible(true);
+                menu.getItem(2).setVisible(true);
             }else{
-                menu.getItem(3).setVisible(false);
+                menu.getItem(2).setVisible(false);
             }
             if(currentUser.isAnonymous()){
                 menu.getItem(1).setVisible(false);
@@ -277,9 +283,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-
-        } else if (id == R.id.action_admin) {
+        if (id == R.id.action_admin) {
             Intent adminActivity = new Intent(MainActivity.this, AdminActivity.class);
             startActivity(adminActivity);
         } else if (id == R.id.action_signout) {

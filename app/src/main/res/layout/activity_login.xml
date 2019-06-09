@@ -82,7 +82,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputEditText"
+                        android:id="@+id/LA_emailEditText"
                         style="@style/Widget.MaterialComponents.TextInputEditText.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -107,6 +107,7 @@
                     app:passwordToggleEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/LA_passwordEditText"
                         style="@style/Widget.MaterialComponents.TextInputEditText.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

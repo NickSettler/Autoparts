@@ -7,7 +7,6 @@
     <string name="LA_registerButton">Регистрация</string>
     <string name="action_filter">Фильтры</string>
     <string name="action_profile">Профиль</string>
-    <string name="action_settings">Настройки</string>
     <string name="action_signout">Выйти</string>
     <string name="action_admin">Админ панель</string>
 
@@ -22,9 +21,6 @@
 
     <string name="FAM_apply">Применить</string>
 
-    <string name="NH_nameTextViewDefault">Нет имени</string>
-    <string name="NH_nameTextViewGuest">Гость</string>
-
     <string name="PA_specsTextViewText">Характеристики</string>
     <string name="PA_partPriceTextView">%1$s руб.</string>
     <string name="PA_partOrdersTextView">Заказов: %1$s</string>
@@ -33,9 +29,6 @@
     <string name="CA_fabText">Далее</string>
 
     <string name="CAM_clear">Отчиститть</string>
-
-    <string name="CI_minusButtonText">Минус</string>
-    <string name="CI_plusButtonText">Плюс</string>
 
     <string name="OA_nameTextViewHint">Имя</string>
     <string name="OA_addressTextViewHint">Адрес</string>
@@ -58,11 +51,9 @@
     <string name="ACPASD_nameHint">Название</string>
     <string name="ACPASD_valueHint">Значение</string>
 
-    <string name="PEIV_editButtonText">Изменить</string>
     <string name="PEIV_deleteButtonText">Удалить</string>
 
     <string name="UA_addressTextViewText">Адрес</string>
-    <string name="UA_ordersTextViewText">Мои заказы</string>
     <string name="UA_ordersButtonText">Мои заказы</string>
 
     <string name="UEA_textViewText">Редактирование пользователя</string>
@@ -74,8 +65,4 @@
 
     <string name="UOI_moreButtonText">Подробнее</string>
 
-    <string name="MA_drawerMenuMain">Автозапчасти</string>
-    <string name="MA_drawerMenuOrders">Мои заказы</string>
-    <string name="MA_drawerMenuCart">Корзина</string>
-    <string name="MA_drawerMenuAbout">О нас</string>
 </resources>

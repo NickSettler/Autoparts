@@ -53,9 +53,9 @@ public class UserActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.UA_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if(currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null) {
+        if (currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null) {
             getSupportActionBar().setTitle("Пользователь");
-        }else{
+        } else {
             getSupportActionBar().setTitle(currentUser.getDisplayName());
         }
 
@@ -63,10 +63,10 @@ public class UserActivity extends AppCompatActivity {
         addressTextView = findViewById(R.id.UA_addressTextView);
         ordersButton = findViewById(R.id.UA_ordersButton);
 
-        if(currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null){
+        if (currentUser.getDisplayName().equals("") || currentUser.getDisplayName() == null) {
             nameTextView.setText("Имя не задано");
             nameTextView.setTextColor(Color.parseColor("#b6b6b6"));
-        }else{
+        } else {
             nameTextView.setText(currentUser.getDisplayName());
         }
         db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -92,12 +92,12 @@ public class UserActivity extends AppCompatActivity {
         db.collection("orders").whereEqualTo("user", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     List<DocumentSnapshot> orderSnapshots = task.getResult().getDocuments();
-                    for(DocumentSnapshot orderSnapshot : orderSnapshots){
+                    for (DocumentSnapshot orderSnapshot : orderSnapshots) {
                         UserOrder userOrder = new UserOrder(orderSnapshot.getId());
                         ArrayList<Map<String, Object>> orderItems = (ArrayList<Map<String, Object>>) orderSnapshot.get("items");
-                        for(ListIterator it = orderItems.listIterator(); it.hasNext(); ){
+                        for (ListIterator it = orderItems.listIterator(); it.hasNext(); ) {
                             Map<String, Object> itemMap = (Map<String, Object>) it.next();
                             UserOrderItem item = new UserOrderItem(String.valueOf(itemMap.get("id")), Integer.valueOf(String.valueOf(itemMap.get("count"))));
                             userOrder.addItem(item);
@@ -122,30 +122,32 @@ public class UserActivity extends AppCompatActivity {
         Log.d("RQC", String.valueOf(requestCode));
         if (resultCode == RESULT_OK) {
             if (requestCode == 1) {
-                Log.d("UA_RES", "OK");
-                Intent intent = getIntent();
-                startActivity(intent);
-                finish();
-//                if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().equals("")) {
-//                    nameTextView.setText(currentUser.getDisplayName());
-//                    Log.d("UA_RES", "UNAME - OK");
-//                }
-//                db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            DocumentSnapshot userSnapshot = task.getResult();
-//                            if (userSnapshot.get("address") != null) {
-//                                String userAddress = String.valueOf(userSnapshot.get("address"));
-//                                addressTextView.setText(userAddress);
-//                                Log.d("UA_RES", "ADDRESS - OK");
-//                            }
-//                        }
-//                    }
-//                });
+                if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().equals("")) {
+                    nameTextView.setText(currentUser.getDisplayName());
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().equals("")) {
+            nameTextView.setText(currentUser.getDisplayName());
+        }
+        db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot userSnapshot = task.getResult();
+                    if (userSnapshot.get("address") != null) {
+                        String userAddress = String.valueOf(userSnapshot.get("address"));
+                        addressTextView.setText(userAddress);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -158,9 +160,9 @@ public class UserActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             finish();
-        }else if(id == R.id.UAM_edit){
+        } else if (id == R.id.UAM_edit) {
             Intent userEditActivity = new Intent(UserActivity.this, UserEditActivity.class);
             startActivityForResult(userEditActivity, 1);
         }

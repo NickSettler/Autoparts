@@ -86,7 +86,7 @@ public class PartsAdapter extends RecyclerView.Adapter<PartsAdapter.ViewHolder> 
                         .into(holder.image);
 
             }
-            holder.descTextView.setText(dataset.get(position).getUid());
+            holder.descTextView.setText(dataset.get(position).getModel());
             holder.nameTextView.setText(dataset.get(position).getName());
             holder.priceTextView.setText(String.format(context.getString(R.string.PA_partPriceTextView), String.valueOf(dataset.get(position).getPrice())));
 

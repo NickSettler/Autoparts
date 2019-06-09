@@ -16,6 +16,7 @@ public class Part implements Serializable {
     int count = 0;
     int orders = 0;
     double price = 0;
+    String model = null;
     List<Spec> specs = new ArrayList<>();
 
     public Part(){
@@ -24,6 +25,7 @@ public class Part implements Serializable {
     public Part(String name){
         this.name = name;
     }
+
     public Part(String name, String imageSrc){
         this.name = name;
         this.imageSrc = imageSrc;
@@ -62,6 +64,10 @@ public class Part implements Serializable {
         this.price = price;
     }
 
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     public void deleteSpecs(){this.specs.clear();}
 
     public void addSpec(Spec spec){
@@ -94,6 +100,10 @@ public class Part implements Serializable {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getModel() {
+        return model;
     }
 
     public List<Spec> getSpecs() {

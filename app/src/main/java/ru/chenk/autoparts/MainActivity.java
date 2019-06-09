@@ -43,7 +43,7 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
-    private FirebaseUser currentUser;
+    private FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     private FirebaseStorage storage;
     private FirebaseFirestore db;
     private FirebaseFirestoreSettings settings;
@@ -80,17 +80,19 @@ public class MainActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot userSnapshot = task.getResult();
-                    if(userSnapshot.get("role") != null){
-                        isAdmin = String.valueOf(userSnapshot.get("role")).equals("admin");
+        if(currentUser!=null){
+            db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        DocumentSnapshot userSnapshot = task.getResult();
+                        if(userSnapshot.get("role") != null){
+                            isAdmin = String.valueOf(userSnapshot.get("role")).equals("admin");
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -98,38 +100,10 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
                 Intent cartActivity = new Intent(MainActivity.this, CartActivity.class);
                 startActivityForResult(cartActivity, 2);
             }
         });
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        NavigationView navigationView = findViewById(R.id.nav_view);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-//        navigationView.setNavigationItemSelectedListener(this);
-//
-//        View headerView = navigationView.getHeaderView(0);
-
-//        headerNameTextView = headerView.findViewById(R.id.NH_name);
-//        headerEmailTextView = headerView.findViewById(R.id.NH_email);
-//
-//        if(currentUser.isAnonymous()){
-//            headerNameTextView.setText(getString(R.string.NH_nameTextViewGuest));
-//        }else{
-//            String displayName = currentUser.getDisplayName();
-//            if(displayName!=null){
-//                if(displayName.equals("")){
-//                    headerNameTextView.setText(getString(R.string.NH_nameTextViewDefault));
-//                }else{
-//                    headerNameTextView.setText(currentUser.getDisplayName());
-//                }
-//            }
-//            headerEmailTextView.setText(currentUser.getEmail());
-//        }
 
         swipeRefreshLayout = findViewById(R.id.MA_refreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -143,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
-
                 loadData();
             }
         });
@@ -177,8 +150,29 @@ public class MainActivity extends AppCompatActivity {
 
         notFoundTextView = findViewById(R.id.MA_notFoundTextView);
 
-        if(currentUser.isAnonymous()){
+        if(currentUser != null && currentUser.isAnonymous()){
             fab.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+        invalidateOptionsMenu();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!=null){
+            db.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        DocumentSnapshot userSnapshot = task.getResult();
+                        if(userSnapshot.get("role") != null){
+                            isAdmin = String.valueOf(userSnapshot.get("role")).equals("admin");
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -269,9 +263,9 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 menu.getItem(3).setVisible(false);
             }
-        }
-        if(currentUser.isAnonymous()){
-            menu.getItem(1).setVisible(false);
+            if(currentUser.isAnonymous()){
+                menu.getItem(1).setVisible(false);
+            }
         }
         return true;
     }

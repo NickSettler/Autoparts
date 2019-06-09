@@ -25,6 +25,9 @@
         <item name="colorControlNormal">@color/colorOnPrimary</item>
         
         <item name="chipStyle">@style/AppChipStyle</item>
+
+        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.MaterialComponents.PopupMenu.Overflow</item>
     </style>
 
     <style name="ExpandedToolbarTextView" parent="TextAppearance.AppCompat.Headline">

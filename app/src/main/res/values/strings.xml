@@ -56,7 +56,16 @@
     <string name="ACPA_nameHint">Name</string>
     <string name="ACPA_priceHint">Price</string>
     <string name="ACPA_countHint">Count</string>
+    <string name="ACPA_modelHint">Model</string>
+    <string name="ACPA_specsTextViewText">Specs</string>
     <string name="ACPA_chooseImageButtonText">Choose Image</string>
+    <string name="ACPA_addSpecButtonText">Add Spec</string>
+
+    <string name="ACPASD_nameHint">Name</string>
+    <string name="ACPASD_valueHint">Value</string>
+
+    <string name="PEIV_editButtonText">Edit</string>
+    <string name="PEIV_deleteButtonText">Delete</string>
 
     <string name="UA_addressTextViewText">Address</string>
     <string name="UA_ordersTextViewText">My orders</string>

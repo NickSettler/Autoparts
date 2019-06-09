@@ -36,6 +36,14 @@ public class AdminActivity extends AppCompatActivity {
                 startActivityForResult(createPartActivity, 1);
             }
         });
+
+        editPartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent editPartsActivity = new Intent(AdminActivity.this, AdminEditPartsActivity.class);
+                startActivity(editPartsActivity);
+            }
+        });
     }
 
     @Override

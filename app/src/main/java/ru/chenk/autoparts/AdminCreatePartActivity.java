@@ -3,18 +3,25 @@ package ru.chenk.autoparts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AlertDialogLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -42,20 +49,25 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class AdminCreatePartActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-    private Button chooseImageButton;
+    private Button chooseImageButton, addSpecButton;
 
-    private TextInputLayout nameInputLayout, priceInputLayout, countInputLayout;
+    private TextInputLayout nameInputLayout, priceInputLayout, countInputLayout, modelsInputLayout;
     private FloatingActionButton fab;
 
     private ImageView preview;
     private ProgressBar progressBar;
-    private Spinner spinner;
+    private AutoCompleteTextView modelsTextView;
+
+    private RecyclerView specsRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private SpecsAdapter adapter;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -65,7 +77,11 @@ public class AdminCreatePartActivity extends AppCompatActivity {
     private Uri fileUri;
     private String httpImageUrl;
 
-    private List<String> modelsArray = new ArrayList<String>();
+    private List<String> modelsArray = new ArrayList<>();
+
+    private List<Spec> specs = new ArrayList<>();
+
+    private Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +99,76 @@ public class AdminCreatePartActivity extends AppCompatActivity {
         nameInputLayout = findViewById(R.id.ACPA_nameInputLayout);
         priceInputLayout = findViewById(R.id.ACPA_priceInputLayout);
         countInputLayout = findViewById(R.id.ACPA_countInputLayout);
+        modelsInputLayout = findViewById(R.id.ACPA_modelsInputLayout);
+
+        addSpecButton = findViewById(R.id.ACPA_addSpecButton);
+
+        specsRecyclerView = findViewById(R.id.ACPA_specsRecyclerView);
+        specsRecyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        specsRecyclerView.setLayoutManager(layoutManager);
+
+        adapter = new SpecsAdapter(specs, true);
+        specsRecyclerView.setAdapter(adapter);
+
+        addSpecButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View addSpecView = LayoutInflater.from(context).inflate(R.layout.admin_create_part_add_spec_dialog, null);
+
+
+                final TextInputLayout addSpecDialogNameInputLayout = addSpecView.findViewById(R.id.ACPASD_nameInputLayout);
+                final TextInputLayout addSpecDialogValueInputLayout = addSpecView.findViewById(R.id.ACPASD_valueInputLayout);
+
+                new MaterialAlertDialogBuilder(context)
+                        .setView(addSpecView)
+                        .setTitle("Добавить характеристику")
+                        .setPositiveButton("Добавить", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String specName = String.valueOf(addSpecDialogNameInputLayout.getEditText().getText());
+                                String specValue = String.valueOf(addSpecDialogValueInputLayout.getEditText().getText());
+                                Spec spec = new Spec(specName, specValue);
+                                specs.add(spec);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }).show();
+            }
+        });
+
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+                for(int i = positionStart; i < positionStart + itemCount - 1; i++){
+                    specs.remove(i);
+                }
+            }
+        });
+
+        specsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && fab.isShown()) {
+                    fab.hide();
+                }
+                if (dy < -10 && !fab.isShown()) {
+                    fab.show();
+                }
+            }
+        });
 
         progressBar = findViewById(R.id.ACPA_progressBar);
 
-        spinner = findViewById(R.id.ACPA_modelsSpinner);
+        modelsTextView = findViewById(R.id.ACPA_modelsTextView);
         db.collection("models").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -96,11 +178,10 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                     for(DocumentSnapshot modelSnapshot : modelSnapshots){
                         if(modelSnapshot.get("name")!=null){
                             modelsArray.add(String.valueOf(modelSnapshot.get("name")));
-                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
-                                    getApplicationContext(), android.R.layout.simple_spinner_item, modelsArray
+                            ArrayAdapter<String> modelsAdapter = new ArrayAdapter<>(
+                                    getApplicationContext(), R.layout.models_dropdown_item_view, modelsArray
                             );
-                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            spinner.setAdapter(spinnerAdapter);
+                            modelsTextView.setAdapter(modelsAdapter);
                         }
                     }
                 }
@@ -115,6 +196,8 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                 String name = nameInputLayout.getEditText().getText().toString();
                 String price = priceInputLayout.getEditText().getText().toString();
                 String count = countInputLayout.getEditText().getText().toString();
+                String model = modelsTextView.getText().toString();
+
 
                 boolean errors = false;
 
@@ -130,18 +213,40 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                     countInputLayout.setError("Введите название");
                     errors = true;
                 }
+                if(model.equals("")){
+                    modelsInputLayout.setError("Выберите модель автомобиля");
+                    errors = true;
+                }
+                if(fileUri == null){
+                    Snackbar.make(v, "Укажите изображение запчасти", Snackbar.LENGTH_SHORT).show();
+                    errors = true;
+                }
                 if (!errors) {
                     progressBar.setVisibility(View.VISIBLE);
                     nameInputLayout.setEnabled(false);
                     priceInputLayout.setEnabled(false);
                     countInputLayout.setEnabled(false);
+                    modelsInputLayout.setEnabled(false);
                     chooseImageButton.setEnabled(false);
+                    specsRecyclerView.setEnabled(false);
+                    addSpecButton.setEnabled(false);
                     final Map<String, Object> partMap = new HashMap<>();
                     partMap.put("name", name);
                     partMap.put("shown", true);
                     partMap.put("orders", 0);
                     partMap.put("count", Integer.valueOf(count));
                     partMap.put("price", Integer.valueOf(price));
+                    partMap.put("model", model);
+                    Map<String, Map<String, String>> dbSpec = new HashMap<>();
+                    int c = 0;
+                    for (Spec spec : specs) {
+                        Map<String, String> dbSpecMap = new HashMap<>();
+                        dbSpecMap.put("name", spec.getName());
+                        dbSpecMap.put("value", spec.getValue());
+                        dbSpec.put(String.valueOf(c), dbSpecMap);
+                        c++;
+                    }
+                    partMap.put("specs", dbSpec);
                     db.collection("parts").add(partMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -178,7 +283,10 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                                             nameInputLayout.setEnabled(true);
                                             priceInputLayout.setEnabled(true);
                                             countInputLayout.setEnabled(true);
+                                            modelsInputLayout.setEnabled(true);
                                             chooseImageButton.setEnabled(true);
+                                            specsRecyclerView.setEnabled(true);
+                                            addSpecButton.setEnabled(true);
                                             Snackbar.make(v, "Не удалось загрузить изображение на сервер", Snackbar.LENGTH_LONG).show();
                                         }
                                     }
@@ -188,7 +296,11 @@ public class AdminCreatePartActivity extends AppCompatActivity {
                                 nameInputLayout.setEnabled(true);
                                 priceInputLayout.setEnabled(true);
                                 countInputLayout.setEnabled(true);
+                                modelsInputLayout.setEnabled(true);
                                 chooseImageButton.setEnabled(true);
+                                specsRecyclerView.setEnabled(true);
+                                addSpecButton.setEnabled(true);
+
                                 Snackbar.make(v, "Не удалось создать автозапчасть", Snackbar.LENGTH_LONG).show();
                             }
                         }
